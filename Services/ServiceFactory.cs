@@ -9,8 +9,8 @@ namespace ToDoTasks.Services
 {
     public static class ServiceFactory
     {
-        private static IQueueService _queueService = new QueueService(OnMessageReceived);
-        private static ICacheService _cacheService = new CacheService();
+        private static readonly IQueueService _queueService = new QueueService(OnMessageReceived);
+        private static readonly ICacheService _cacheService = new CacheService();
 
         private static void OnMessageReceived(ToDoTask obj)
         {

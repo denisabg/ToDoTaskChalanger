@@ -22,20 +22,17 @@ namespace ToDoTasks.Controllers
     public class TasksController : ControllerBase
     {
 
-        private ILogger<TasksController> _logger;
-        private ITaskToDoService _service;
-        private UserManager<ApplicationUser> _userManager;
-        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+        private readonly ILogger<TasksController> _logger;
+        private readonly ITaskToDoService _service;
 
         //public TasksController()
         //{
         //    this._service = ServiceFactory.Create();
         //}
 
-        public TasksController(ILogger<TasksController> logger, UserManager<ApplicationUser> userManager)
+        public TasksController(ILogger<TasksController> logger)
         {
             _logger = logger;
-            _userManager = userManager;
             _service = ServiceFactory.Create();
         }
 
@@ -47,14 +44,7 @@ namespace ToDoTasks.Controllers
 
             try
             {
-                ClaimsPrincipal currentUser = User;
-                //var currentUserName = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-                //ApplicationUser user = await _userManager.FindByNameAsync(currentUserName);
-
-                IdentityUser user = await _userManager.FindByNameAsync(currentUser.Identity.Name);
-
-
-                return await _service.GetAsync(user.UserName);
+                return await _service.GetAsync(User.Identity.Name);
             }
             catch (Exception ex)
             {

@@ -73,8 +73,8 @@ export class TasksComponent implements OnInit, OnDestroy {
     let dateNow: Date = new Date();
 
     let timeStamp = this.tasks.length > 0
-      ? this.tasks[this.tasks.length - 1].DateStamp
-      : dateNow.toISOString();
+      ? this.tasks[this.tasks.length - 1].dateStamp
+      : dateNow;
 
 
     let dueTimeStamp = dateNow
@@ -82,12 +82,12 @@ export class TasksComponent implements OnInit, OnDestroy {
 
 
     let newTask: iTask = {
-      Id: Guid.create().toString(),
+      id: Guid.create().toString(),
       //Id: this.tasks.length.toString(),
-      DateStamp: timeStamp,
-      DueDate: new Date(dueTimeStamp).toISOString(),
-      TaskDescription: " xxx pokemon xxx ",
-      UserName: this.userName
+      dateStamp: timeStamp,
+      dueDate: new Date(dueTimeStamp),
+      taskDescription: " xxx pokemon xxx ",
+      userName: this.userName
     };
 
     return newTask;
@@ -105,7 +105,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   getData() {
     this.getSubscriber = this.http.get<iTask[]>(`${this.baseUrl}tasks`)
       .subscribe(result => {
-        console.log(`res => ${result}`);
+        console.log(`res => ${JSON.stringify(result)}`);
         this.tasks = result;
       }, error => console.error(error));
   }
@@ -119,7 +119,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     return this.http.post<iTask>(`${this.baseUrl}tasks`, task)//, this.httpOptions)
       .pipe(tap(
         res => {
-          console.log(`posted -`, res);
+          console.log(`posted -`, JSON.stringify(res));
         }
       ));
   }

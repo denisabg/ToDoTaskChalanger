@@ -10,7 +10,7 @@ namespace ToDoTasks.Services
 {
     public class CacheService : ICacheService
     {
-        private IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
+        private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
 
 
         public async Task AddAsync(ToDoTask chatMessage)

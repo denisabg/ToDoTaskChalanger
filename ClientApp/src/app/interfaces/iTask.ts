@@ -1,8 +1,9 @@
+import { Guid } from "guid-typescript";
 
 export interface iTask {
-    Id: string;
-    DateStamp: string;
-    UserName: string;
-    TaskDescription: string;
-    DueDate: string;
+    id: string;
+    dateStamp: Date;
+    userName: string;
+    taskDescription: string;
+    dueDate: Date;
 }
