@@ -21,14 +21,8 @@ namespace ToDoTasks.Controllers
     [Route("[controller]")]
     public class TasksController : ControllerBase
     {
-
         private readonly ILogger<TasksController> _logger;
         private readonly ITaskToDoService _service;
-
-        //public TasksController()
-        //{
-        //    this._service = ServiceFactory.Create();
-        //}
 
         public TasksController(ILogger<TasksController> logger)
         {
@@ -41,18 +35,18 @@ namespace ToDoTasks.Controllers
         [HttpGet]
         public async Task<IEnumerable<ToDoTask>> Get()
         {
-
+            IReadOnlyCollection<ToDoTask> result = new List<ToDoTask>();
             try
             {
-                return await _service.GetAsync(User.Identity.Name);
+                var name = User.Identity.Name;
+                result = await _service.GetAsync(name);
             }
             catch (Exception ex)
             {
                 _logger.Log(LogLevel.Error, ex.Message);
             }
 
-            return new List<ToDoTask>();
-            
+            return result;
         }
 
 
@@ -62,14 +56,13 @@ namespace ToDoTasks.Controllers
         {
             try
             {
-
                 await _service.SendAsync(value);
             }
             catch (Exception ex)
             {
                 _logger.Log(LogLevel.Error, ex.Message);
             }
-            //Return id or object 
+
             return value;
         }
 

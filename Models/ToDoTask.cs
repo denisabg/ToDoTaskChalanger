@@ -13,12 +13,14 @@ namespace ToDoTasks.Models
         public string UserName { get; set; }
         public string TaskDescription { get; set; }
         public DateTime DueDate { get; set; }
+        public bool IsCommitted { get; set; }
 
 
         public ToDoTask()
         {
             Id = Guid.NewGuid();
             DateStamp = DateTime.UtcNow;
+            IsCommitted = false;
         }
     }
 }

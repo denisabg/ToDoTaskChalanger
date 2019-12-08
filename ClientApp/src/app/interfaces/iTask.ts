@@ -1,4 +1,3 @@
-import { Guid } from "guid-typescript";
 
 export interface iTask {
     id: string;
@@ -6,4 +5,5 @@ export interface iTask {
     userName: string;
     taskDescription: string;
     dueDate: Date;
+    isCommitted: boolean;
 }

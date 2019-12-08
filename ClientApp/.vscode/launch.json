@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": " HTTPS : 44305 ",
-            "url": "http://localhost:44305",
+            "url": "http://localhost:44305/login",
             "webRoot": "${workspaceFolder}"
         }
     ]

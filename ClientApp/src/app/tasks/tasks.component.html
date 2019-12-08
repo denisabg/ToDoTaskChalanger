@@ -1,11 +1,59 @@
-<h1 id="tableLabel">TODO Tasks Lists </h1>
-<pre> {{ userName }} </pre>
+<div class='panel panel-primary'>
+  <div class='panel-heading' style='font-size:large'>
+    TODO Tasks Lists
+  </div>
 
+  <div class='panel-body'>
+    <div class='row'>
 
-<ul *ngFor="let task of tasks">
-  <li>
-    <pre>
-      {{task.taskDescription}}
-  </pre>
-  </li>
-</ul>
+      <div class="col-md-12">
+
+        <label>Task title:
+          <input type="" [(ngModel)]="newTask.taskDescription" placeholder="description" />
+        </label>
+
+        <label>Due date:
+          <input type="date" [(ngModel)]="newTask.dueDate" placeholder="" />
+        </label>
+
+        <button type="submit" (click)="saveTask()"> Add </button>
+      </div>
+
+    </div>
+
+    <div class='row' *ngIf="(allTasks&&allTasks.length);else falsyTemplate">
+
+      <div class="col-md-4">Done Tasks:
+        <ul *ngFor="let task of doneTasks">
+          <li>
+            {{task.taskDescription}} till {{task.dueDate.toLocaleString('he-IL')}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-4">Late Tasks:
+        <ul *ngFor="let task of lateTasks">
+          <li>
+            {{task.taskDescription}} was late on {{task.dueDate.toLocaleString('he-IL')}}
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-4">On Time Tasks:
+        <ul *ngFor="let task of ontimeTasks">
+          <li [class.selected]="task === newTask" (click)="onSelect(task)">
+            {{task.taskDescription}} until {{task.dueDate.toLocaleString('he-IL')}}
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class='panel-footer'>
+
+      <ng-template #falsyTemplate>
+        <h3>No Recordes were found!!</h3>
+      </ng-template>
+
+    </div>
+  </div>

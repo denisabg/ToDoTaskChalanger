@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AuthorizeService } from "../../api-authorization/authorize.service";
 import { Guid } from 'guid-typescript';
 import { iTask } from "../interfaces/iTask";
+import { TaskService } from '../services/task.service';
+import { DatePipe } from '@angular/common'
 
 
 @Component({
@@ -18,48 +18,27 @@ export class TasksComponent implements OnInit, OnDestroy {
   public getSubscriber = new Subscription();
   public postSubscriber = new Subscription();
 
-  public tasks: iTask[] = [];
+  public allTasks: iTask[] = [];
   public newTask: iTask;
+  public doneTasks: iTask[] = [];
+  public lateTasks: iTask[] = [];
+  public ontimeTasks: iTask[] = [];
 
   constructor(
-    private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
-    authorizeService: AuthorizeService) {
+    authorizeService: AuthorizeService,
+    private taskService: TaskService) {
 
-    this.userSubscriber = authorizeService.getUser().subscribe(res => {
-      this.userName = res.name;
-    });
+    this.userSubscriber = authorizeService.getUser()
+      .subscribe(res => {
+        this.userName = res.name;
+      });
 
-
+    this.getAllTasks();
   }
 
-  //private httpOptions = {
-  //    headers: new HttpHeaders({
-  //        'Content-Type': 'application/json; charset=utf-8',
-  //        'Access-Control-Allow-Origin': '*',
-  //        'Access-Control-Allow-Methods': 'POST, GET',
-  //        'Authorization': 'my-new-auth-token',
-  //        'Api-Key': '{1d585c8e-a7e4-4ae8-9aa3-1819ab9d1a66}'
-  //    })
-  //};
-
-
   ngOnInit(): void {
-
-    console.log("user: ", this.userName);
-
-    var newTask = this.createData();
-
-    this.postData(newTask);
-
-    newTask = this.createData();
-
-    this.postData(newTask);
-
-
-
-    let get = this.getData();
-
+    this.newTask = this.createData();
+    this.getAllTasks();
   }
 
 
@@ -69,58 +48,74 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.postSubscriber.unsubscribe();
   }
 
-  createData() {
+  createData(): iTask {
     let dateNow: Date = new Date();
 
-    let timeStamp = this.tasks.length > 0
-      ? this.tasks[this.tasks.length - 1].dateStamp
+    let timeStamp = this.allTasks.length > 0
+      ? this.allTasks[this.allTasks.length - 1].dateStamp
       : dateNow;
-
 
     let dueTimeStamp = dateNow
       .setTime(dateNow.getTime() + (30 * 60 * 1000));
 
-
-    let newTask: iTask = {
+    let task: iTask = {
       id: Guid.create().toString(),
-      //Id: this.tasks.length.toString(),
       dateStamp: timeStamp,
       dueDate: new Date(dueTimeStamp),
-      taskDescription: " xxx pokemon xxx ",
-      userName: this.userName
+      taskDescription: "",
+      userName: this.userName,
+      isCommitted: false
     };
 
-    return newTask;
+    return task;
   }
 
-  //  getData(userName: string) {
-  //      const options = { params: new HttpParams({ fromString: `userName=${userName}` }) };
-  //      this.getSubscriber = this.http.get<iTask[]>(`${this.baseUrl}tasks`, options)
-  //          .subscribe(result => {
-  //              console.log(`res => ${result}`);
-  //              this.tasks = result;
-  //          }, error => console.error(error));
-  //}
+  onSelect(task: iTask): void {
+    task.isCommitted = true;
+    //console.log(`selected now => ${JSON.stringify(task)}`);
+    this.postData(task);
+  }
 
-  getData() {
-    this.getSubscriber = this.http.get<iTask[]>(`${this.baseUrl}tasks`)
-      .subscribe(result => {
-        console.log(`res => ${JSON.stringify(result)}`);
-        this.tasks = result;
-      }, error => console.error(error));
+  saveTask() {
+    let $this=this;
+    //console.log(`saveTask => ${JSON.stringify(this.newTask)}`);
+
+    let dueDate = new Date(this.newTask.dueDate);
+    $this.newTask.dueDate = dueDate;
+    this.newTask = $this.newTask;
+
+    this.postData(this.newTask);
+
   }
 
   postData(task: iTask) {
-    this.postSubscriber = this.addTask(task).subscribe();
-
+    this.postSubscriber = this.taskService.sendTask(task)
+      .subscribe(() => {
+          this.newTask = this.createData();
+          this.getAllTasks();
+      }, error => console.error(error));
   }
 
-  addTask(task: iTask): Observable<iTask> {
-    return this.http.post<iTask>(`${this.baseUrl}tasks`, task)//, this.httpOptions)
-      .pipe(tap(
-        res => {
-          console.log(`posted -`, JSON.stringify(res));
-        }
-      ));
+
+  getAllTasks(){
+    
+    this.getSubscriber = this.taskService.getAllTAsks()
+      .subscribe(res => {
+
+        this.allTasks = res;
+        
+        this.ontimeTasks = this.allTasks.filter(task =>
+          (task.dueDate >= task.dateStamp) &&
+          (!task.isCommitted));
+
+        this.lateTasks = this.allTasks.filter(task =>
+          (task.dueDate < task.dateStamp) &&
+          (!task.isCommitted));
+
+        this.doneTasks = this.allTasks.filter(task =>
+          task.isCommitted);
+      });
   }
+
+
 }

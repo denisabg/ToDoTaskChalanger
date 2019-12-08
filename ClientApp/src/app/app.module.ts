@@ -13,6 +13,7 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { TasksComponent } from './tasks/tasks.component';
+import { TaskService } from './services/task.service';
 
 @NgModule({
     declarations: [
@@ -32,10 +33,14 @@ import { TasksComponent } from './tasks/tasks.component';
             { path: '', component: HomeComponent, pathMatch: 'full' },
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
-            { path: 'tasks', component: TasksComponent, canActivate: [AuthorizeGuard]}
+            { path: 'tasks', component: TasksComponent, canActivate: [AuthorizeGuard]},
+
+            { path: '', redirectTo: '', pathMatch: 'full' },
+            { path: '**', redirectTo: '', pathMatch: 'full'}
         ])
     ],
     providers: [
+        TaskService,
         { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
     ],
     bootstrap: [AppComponent]
