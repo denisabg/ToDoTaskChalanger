@@ -8,8 +8,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+// import { CounterComponent } from './counter/counter.component';
+// import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
@@ -22,8 +22,8 @@ import { ModalTaskComponent } from './modal/modal.task';
         AppComponent,
         NavMenuComponent,
         HomeComponent,
-        CounterComponent,
-        FetchDataComponent,
+        // CounterComponent,
+        // FetchDataComponent,
         TasksComponent,
         ModalTaskComponent
     ],
@@ -34,8 +34,8 @@ import { ModalTaskComponent } from './modal/modal.task';
         ApiAuthorizationModule,
         RouterModule.forRoot([
             { path: '', component: HomeComponent, pathMatch: 'full' },
-            { path: 'counter', component: CounterComponent },
-            { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
+            // { path: 'counter', component: CounterComponent },
+            // { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard] },
             { path: 'tasks', component: TasksComponent, canActivate: [AuthorizeGuard]},
 
             { path: '', redirectTo: '', pathMatch: 'full' },
