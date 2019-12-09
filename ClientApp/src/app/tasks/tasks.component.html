@@ -5,28 +5,24 @@
 
   <div class='panel-body'>
     <div class='row'>
-
       <div class="col-md-12">
-
         <label>Task title:
-          <input type="" [(ngModel)]="newTask.taskDescription" placeholder="description" />
+          <input type="text" [(ngModel)]="newTask.description" placeholder="Enter task title here" />
         </label>
 
         <label>Due date:
-          <input type="date" [(ngModel)]="newTask.dueDate" placeholder="" />
+          <input type="date" [(ngModel)]="newTask.dueDate" />
         </label>
 
         <button type="submit" (click)="saveTask()"> Add </button>
       </div>
-
     </div>
 
     <div class='row' *ngIf="(allTasks&&allTasks.length);else falsyTemplate">
-
       <div class="col-md-4">Done Tasks:
         <ul *ngFor="let task of doneTasks">
           <li>
-            {{task.taskDescription}} till {{task.dueDate.toLocaleString('he-IL')}}
+            {{task.description}} till {{task.dueDate.toLocaleString('he-IL')|date:'dd/MM/yyyy'}}
           </li>
         </ul>
       </div>
@@ -34,15 +30,18 @@
       <div class="col-md-4">Late Tasks:
         <ul *ngFor="let task of lateTasks">
           <li>
-            {{task.taskDescription}} was late on {{task.dueDate.toLocaleString('he-IL')}}
+            {{task.description}} was late on {{task.dueDate.toLocaleString('he-IL')|date:'dd/MM/yyyy'}}
           </li>
         </ul>
       </div>
 
       <div class="col-md-4">On Time Tasks:
+        
         <ul *ngFor="let task of ontimeTasks">
-          <li [class.selected]="task === newTask" (click)="onSelect(task)">
-            {{task.taskDescription}} until {{task.dueDate.toLocaleString('he-IL')}}
+          <!-- <li [class.selected]="task === newTask" (click)="onSelect(task)"> -->
+            <li class="scrollable" (click)="onSelect(task)">
+                <!-- <button class="btn btn-lg btn-outline-primary" (click)="onSelect(task)">Launch demo modal</button> -->
+            {{task.description}} until {{task.dueDate.toLocaleString('he-IL')|date:'dd/MM/yyyy'}}
           </li>
         </ul>
       </div>
@@ -56,4 +55,5 @@
       </ng-template>
 
     </div>
+
   </div>

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -14,6 +15,7 @@ import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { TasksComponent } from './tasks/tasks.component';
 import { TaskService } from './services/task.service';
+import { ModalTaskComponent } from './modal/modal.task';
 
 @NgModule({
     declarations: [
@@ -22,7 +24,8 @@ import { TaskService } from './services/task.service';
         HomeComponent,
         CounterComponent,
         FetchDataComponent,
-        TasksComponent
+        TasksComponent,
+        ModalTaskComponent
     ],
     imports: [
         BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -37,12 +40,18 @@ import { TaskService } from './services/task.service';
 
             { path: '', redirectTo: '', pathMatch: 'full' },
             { path: '**', redirectTo: '', pathMatch: 'full'}
-        ])
+        ]),
+        NgbModule
     ],
     providers: [
         TaskService,
         { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
     ],
-    bootstrap: [AppComponent]
+    entryComponents: [
+        ModalTaskComponent
+    ],
+    bootstrap: [
+        AppComponent
+    ]
 })
 export class AppModule { }

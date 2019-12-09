@@ -1,15 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { AuthorizeService } from "../../api-authorization/authorize.service";
 import { Guid } from 'guid-typescript';
 import { iTask } from "../interfaces/iTask";
 import { TaskService } from '../services/task.service';
-import { DatePipe } from '@angular/common'
+import {NgbModal, ModalDismissReasons, NgbModalOptions} from '@ng-bootstrap/ng-bootstrap';
+import { ModalTaskComponent } from '../modal/modal.task';
+
 
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
+  styleUrls:['./tasks.component.css']
 })
 export class TasksComponent implements OnInit, OnDestroy {
 
@@ -26,7 +29,8 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   constructor(
     authorizeService: AuthorizeService,
-    private taskService: TaskService) {
+    private taskService: TaskService,
+    private modalService: NgbModal) {
 
     this.userSubscriber = authorizeService.getUser()
       .subscribe(res => {
@@ -62,7 +66,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       id: Guid.create().toString(),
       dateStamp: timeStamp,
       dueDate: new Date(dueTimeStamp),
-      taskDescription: "",
+      description: "",
       userName: this.userName,
       isCommitted: false
     };
@@ -71,10 +75,27 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   onSelect(task: iTask): void {
-    task.isCommitted = true;
+    const modalRef = this.modalService.open(ModalTaskComponent)
+    modalRef.componentInstance.task = task;
+    
+    modalRef.result.then((result) => {
+      //  console.log( `Accepted ${this.getDismissReason(result)}`);
+      task.isCommitted = true;
+      this.postData(task);
+    }, (reason) => {
+      //  console.log( `Dismissed ${this.getDismissReason(reason)}`);
+    });
     //console.log(`selected now => ${JSON.stringify(task)}`);
-    this.postData(task);
   }
+  // private getDismissReason(reason: any): string {
+  //   if (reason === ModalDismissReasons.ESC) {
+  //     return 'by pressing ESC';
+  //   } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+  //     return 'by clicking on a backdrop';
+  //   } else {
+  //     return  `with: ${reason}`;
+  //   }
+  // }
 
   saveTask() {
     let $this=this;

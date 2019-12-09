@@ -11,7 +11,7 @@ namespace ToDoTasks.Models
         public DateTime DateStamp { get; set; }
 
         public string UserName { get; set; }
-        public string TaskDescription { get; set; }
+        public string Description { get; set; }
         public DateTime DueDate { get; set; }
         public bool IsCommitted { get; set; }
 
