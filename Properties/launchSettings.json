@@ -28,8 +28,9 @@
       "commandName": "AzureDevSpaces",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Test"
+      },
+      "applicationUrl": "https://todotasksng.azurewebsites.net/clientapp/"
     },
     "nativeDebugging": true
   }

@@ -1,7 +1,9 @@
+using System;
 using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -36,10 +38,12 @@ namespace ToDoTasks
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
+            services.AddAuthentication().AddIdentityServerJwt();
+
             services.AddControllersWithViews();
+
             services.AddRazorPages();
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -48,9 +52,27 @@ namespace ToDoTasks
             services.AddTransient<IProfileService, AspNetIdentityProfileService>();
 
             services.AddMemoryCache();
+
+            services.AddMvc();
+
+            services.AddHsts(options =>
+            {
+                options.Preload = true;
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(60);
+                options.ExcludedHosts.Add("azurewebsites.net");
+                options.ExcludedHosts.Add("www.todotasksng.azurewebsites.net");
+            });
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 5001;
+            });
+
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime.
+        // Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -65,17 +87,13 @@ namespace ToDoTasks
                 // You may want to change this for production scenarios,
                 // see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-            }
-
-            //app.UseHttpsRedirection();
-
-            app.UseStaticFiles();
-
-            if (!env.IsDevelopment())
-            {
                 app.UseSpaStaticFiles();
             }
 
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
+            //app.UseMvc();
             app.UseRouting();
 
             app.UseAuthentication();
