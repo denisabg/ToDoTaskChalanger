@@ -61,12 +61,16 @@ namespace ToDoTasks
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // The default HSTS value is 30 days.
+                // You may want to change this for production scenarios,
+                // see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
@@ -74,15 +78,11 @@ namespace ToDoTasks
 
             app.UseRouting();
 
-            //app.UseCors("SiteCorsPolicy");
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
+
+            app.UseIdentityServer();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -102,7 +102,19 @@ namespace ToDoTasks
                 {
                     spa.UseAngularCliServer(npmScript: "start");
                 }
+
+                if (env.IsEnvironment("Test"))
+                {
+                    spa.UseProxyToSpaDevelopmentServer("https://todotasksng.azurewebsites.net/");
+                }
+
             });
+
+            app.UseCors("SiteCorsPolicy");
+            //app.UseCors(x => x
+            //    .AllowAnyOrigin()
+            //    .AllowAnyMethod()
+            //    .AllowAnyHeader());
 
         }
     }
